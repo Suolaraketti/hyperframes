@@ -180,4 +180,10 @@ by design (no vendor lock-in).
 
 ## Briefs / TODO (append as we go)
 
-- [ ] (awaiting first video brief) — vibe, length, aspect ratio, product line, assets
+- [x] **Overview launch video** — `dialfyne/overview-video/` (Hyperframes). 39s, 1080p, dark
+      premium SaaS-launch look, sky-blue brand accent. 7 scenes: hook → cost → brand reveal →
+      Voice AI → Roleplay → proof → CTA. Fonts: Oswald + JetBrains Mono. Renders clean (lint /
+      validate / inspect all green). See that folder's README for the sandbox render steps
+      (vendor gsap + symlink ffmpeg). Used the placeholder logo mark (brace + 3 bars) since real
+      logo files never landed on disk.
+- [ ] Get real Dialfyne logo files (SVG) to replace the reconstructed mark in the video.
