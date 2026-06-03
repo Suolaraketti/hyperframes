@@ -37,6 +37,15 @@
       #scene6 { z-index: 6; opacity: 0; }
       #scene7 { z-index: 7; opacity: 0; }
 
+      /* camera layer: continuous drift lives here (separate from scene transitions) */
+      .cam {
+        position: absolute;
+        inset: 0;
+        transform: scale(1.04);
+        transform-origin: 50% 50%;
+        will-change: transform;
+      }
+
       /* ---- shared decorative + type primitives ---- */
       .kicker {
         font-family: "JetBrains Mono", monospace;
@@ -70,16 +79,20 @@
       }
       .muted { color: #a9bbd6; }
 
-      /* radial glow base */
       .glow {
         position: absolute;
         border-radius: 50%;
         filter: blur(40px);
         pointer-events: none;
       }
-      .hair {
+      .hair { position: absolute; background: #1c2840; }
+      .dot {
         position: absolute;
-        background: #1c2840;
+        border-radius: 50%;
+        background: #3fa9ff;
+        opacity: 0.5;
+        filter: blur(1px);
+        pointer-events: none;
       }
 
       /* ----- SCENE 1: hook ----- */
@@ -176,7 +189,6 @@
       }
       .metrics b { color: #7fc3f7; font-weight: 700; }
 
-      /* waveform deco for scene 4 */
       #s4-wave { position: absolute; right: 150px; top: 240px; display: flex; align-items: center; gap: 14px; height: 180px; }
       #s4-wave span {
         width: 12px; height: 30px; border-radius: 6px;
@@ -229,139 +241,162 @@
     >
       <!-- ============ SCENE 1 — HOOK ============ -->
       <div id="scene1" class="scene">
-        <div class="glow" data-layout-ignore id="s1-glow" style="width:900px;height:900px;top:8%;left:55%;background:#103a66;opacity:0.55;"></div>
-        <div class="glow" data-layout-ignore style="width:520px;height:520px;bottom:-12%;left:-6%;background:#0c2a4d;opacity:0.5;"></div>
-        <div id="s1-ring1"></div>
-        <div id="s1-ring2"></div>
-        <div id="s1-ring3"></div>
-        <div class="hair" style="top:120px;left:140px;width:220px;height:2px;"></div>
-        <div class="stage">
-          <div class="kicker" id="s1-kick" style="position:absolute;top:118px;left:140px;">After 6:00 PM</div>
-          <div class="bignum" id="s1-num">62%</div>
-          <div class="headline" id="s1-line">of service calls go unanswered.</div>
-          <div class="mono" id="s1-foot">The phone rings. Nobody picks up.</div>
+        <div class="cam" data-layout-allow-overflow id="s1-cam">
+          <div class="glow" data-layout-ignore id="s1-glow" style="width:900px;height:900px;top:8%;left:55%;background:#103a66;opacity:0.55;"></div>
+          <div class="glow" data-layout-ignore style="width:520px;height:520px;bottom:-12%;left:-6%;background:#0c2a4d;opacity:0.5;"></div>
+          <div id="s1-ring1"></div>
+          <div id="s1-ring2"></div>
+          <div id="s1-ring3"></div>
+          <div class="hair" style="top:120px;left:140px;width:220px;height:2px;"></div>
+          <div class="stage">
+            <div class="kicker" id="s1-kick" style="position:absolute;top:118px;left:140px;">After 6:00 PM</div>
+            <div class="bignum" id="s1-num">0%</div>
+            <div class="headline" id="s1-line">of service calls go unanswered.</div>
+            <div class="mono" id="s1-foot">The phone rings. Nobody picks up.</div>
+          </div>
         </div>
       </div>
 
       <!-- ============ SCENE 2 — THE COST ============ -->
       <div id="scene2" class="scene">
-        <div class="glow" data-layout-ignore id="s2-glow" style="width:820px;height:820px;bottom:-12%;left:-6%;background:#0f3358;opacity:0.5;"></div>
-        <div class="glow" data-layout-ignore style="width:560px;height:560px;top:-10%;right:-8%;background:#0c2a4d;opacity:0.45;"></div>
-        <div class="hair" style="bottom:160px;right:140px;width:240px;height:2px;"></div>
-        <div class="stage">
-          <div class="kicker" style="position:absolute;top:118px;left:140px;">The cost of waiting</div>
-          <div class="bignum" id="s2-num">97%</div>
-          <div class="headline" id="s2-line">of callers who hit voicemail never call back.</div>
-          <div id="s2-tag" class="mono">$175 per lead. <b>Gone.</b></div>
+        <div class="cam" data-layout-allow-overflow id="s2-cam">
+          <div class="glow" data-layout-ignore id="s2-glow" style="width:820px;height:820px;bottom:-12%;left:-6%;background:#0f3358;opacity:0.5;"></div>
+          <div class="glow" data-layout-ignore style="width:560px;height:560px;top:-10%;right:-8%;background:#0c2a4d;opacity:0.45;"></div>
+          <div class="dot" style="width:14px;height:14px;top:30%;right:24%;"></div>
+          <div class="dot" style="width:9px;height:9px;top:62%;right:32%;"></div>
+          <div class="dot" style="width:18px;height:18px;top:46%;right:18%;opacity:0.35;"></div>
+          <div class="hair" style="bottom:160px;right:140px;width:240px;height:2px;"></div>
+          <div class="stage">
+            <div class="kicker" style="position:absolute;top:118px;left:140px;">The cost of waiting</div>
+            <div class="bignum" id="s2-num">0%</div>
+            <div class="headline" id="s2-line">of callers who hit voicemail never call back.</div>
+            <div id="s2-tag" class="mono">$175 per lead. <b>Gone.</b></div>
+          </div>
         </div>
       </div>
 
       <!-- ============ SCENE 3 — BRAND REVEAL ============ -->
       <div id="scene3" class="scene">
-        <div class="glow" data-layout-ignore id="s3-glow" style="width:1100px;height:1100px;top:50%;left:50%;margin:-550px 0 0 -550px;background:#1b5fb0;opacity:0.45;"></div>
-        <div class="center">
-          <div class="kicker" id="s3-kick">Meet</div>
-          <div id="s3-lockup">
-            <svg id="s3-mark" viewBox="0 0 360 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dialfyne mark">
-              <defs>
-                <linearGradient id="dfgrad" x1="0" y1="0" x2="360" y2="300" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stop-color="#7fc3f7" />
-                  <stop offset="1" stop-color="#1b6fe8" />
-                </linearGradient>
-              </defs>
-              <path d="M250 40 C150 56 110 96 70 150 C110 204 150 244 250 260"
-                    stroke="url(#dfgrad)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" />
-              <rect x="196" y="60" width="150" height="36" rx="18" fill="url(#dfgrad)" />
-              <rect x="196" y="132" width="150" height="36" rx="18" fill="url(#dfgrad)" />
-              <rect x="196" y="204" width="100" height="36" rx="18" fill="url(#dfgrad)" />
-            </svg>
-            <div id="s3-word">Dialfyne</div>
+        <div class="cam" data-layout-allow-overflow id="s3-cam">
+          <div class="glow" data-layout-ignore id="s3-glow" style="width:1100px;height:1100px;top:50%;left:50%;margin:-550px 0 0 -550px;background:#1b5fb0;opacity:0.45;"></div>
+          <div class="center">
+            <div class="kicker" id="s3-kick">Meet</div>
+            <div id="s3-lockup">
+              <svg id="s3-mark" viewBox="0 0 360 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dialfyne mark">
+                <defs>
+                  <linearGradient id="dfgrad" x1="0" y1="0" x2="360" y2="300" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#7fc3f7" />
+                    <stop offset="1" stop-color="#1b6fe8" />
+                  </linearGradient>
+                </defs>
+                <path d="M250 40 C150 56 110 96 70 150 C110 204 150 244 250 260"
+                      stroke="url(#dfgrad)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" />
+                <rect x="196" y="60" width="150" height="36" rx="18" fill="url(#dfgrad)" />
+                <rect x="196" y="132" width="150" height="36" rx="18" fill="url(#dfgrad)" />
+                <rect x="196" y="204" width="100" height="36" rx="18" fill="url(#dfgrad)" />
+              </svg>
+              <div id="s3-word">Dialfyne</div>
+            </div>
+            <div id="s3-rule"></div>
+            <div id="s3-tag">Never lose a job to voicemail again.</div>
           </div>
-          <div id="s3-rule"></div>
-          <div id="s3-tag">Never lose a job to voicemail again.</div>
         </div>
       </div>
 
       <!-- ============ SCENE 4 — VOICE AI ============ -->
       <div id="scene4" class="scene">
-        <div class="glow" data-layout-ignore style="width:760px;height:760px;top:-10%;right:-6%;background:#103a66;opacity:0.5;"></div>
-        <div class="glow" data-layout-ignore style="width:520px;height:520px;bottom:-14%;left:-6%;background:#0c2a4d;opacity:0.42;"></div>
-        <div class="hair" style="top:300px;left:140px;width:1640px;height:2px;"></div>
-        <div id="s4-wave">
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span>
-        </div>
-        <div class="prod">
-          <div class="kicker" id="s4-kick" style="position:absolute;top:120px;left:140px;">01 / Voice AI</div>
-          <div class="headline prod-head" id="s4-head">Answers every call in your business name. Around the clock.</div>
-          <div class="chips" id="s4-chips">
-            <div class="chip">Books appointments</div>
-            <div class="chip">Collects deposits</div>
-            <div class="chip">Follows up</div>
+        <div class="cam" data-layout-allow-overflow id="s4-cam">
+          <div class="glow" data-layout-ignore style="width:760px;height:760px;top:-10%;right:-6%;background:#103a66;opacity:0.5;"></div>
+          <div class="glow" data-layout-ignore style="width:520px;height:520px;bottom:-14%;left:-6%;background:#0c2a4d;opacity:0.42;"></div>
+          <div class="hair" style="top:300px;left:140px;width:1640px;height:2px;"></div>
+          <div id="s4-wave">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
           </div>
-          <div class="metrics mono" id="s4-metrics">
-            <div><b>sub-200ms</b> latency</div>
-            <div><b>98.7%</b> intent accuracy</div>
-            <div>live in <b>under 48h</b></div>
+          <div class="prod">
+            <div class="kicker" id="s4-kick" style="position:absolute;top:120px;left:140px;">01 / Voice AI</div>
+            <div class="headline prod-head" id="s4-head">Answers every call in your business name. Around the clock.</div>
+            <div class="chips" id="s4-chips">
+              <div class="chip">Books appointments</div>
+              <div class="chip">Collects deposits</div>
+              <div class="chip">Follows up</div>
+            </div>
+            <div class="metrics mono" id="s4-metrics">
+              <div><b>sub-200ms</b> latency</div>
+              <div><b>98.7%</b> intent accuracy</div>
+              <div>live in <b>under 48h</b></div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ============ SCENE 5 — ROLEPLAY ============ -->
       <div id="scene5" class="scene">
-        <div class="glow" data-layout-ignore style="width:820px;height:820px;bottom:-14%;right:-8%;background:#13325c;opacity:0.5;"></div>
-        <div class="glow" data-layout-ignore style="width:520px;height:520px;top:-12%;left:-6%;background:#0c2a4d;opacity:0.42;"></div>
-        <div class="hair" style="top:300px;left:140px;width:1640px;height:2px;"></div>
-        <div class="prod">
-          <div class="kicker" id="s5-kick" style="position:absolute;top:120px;left:140px;">02 / AI Roleplay</div>
-          <div class="headline prod-head" id="s5-head">Your reps practice on AI prospects before they ever call a real one.</div>
-          <div class="chips" id="s5-chips">
-            <div class="chip">Cut ramp time</div>
-            <div class="chip">Standardize quality</div>
-            <div class="chip">Unblock managers</div>
-          </div>
-          <div class="metrics mono" id="s5-metrics">
-            <div>practice <b>any scenario</b></div>
-            <div><b>consistent</b> every call</div>
-            <div>no <b>manager bottleneck</b></div>
+        <div class="cam" data-layout-allow-overflow id="s5-cam">
+          <div class="glow" data-layout-ignore style="width:820px;height:820px;bottom:-14%;right:-8%;background:#13325c;opacity:0.5;"></div>
+          <div class="glow" data-layout-ignore style="width:520px;height:520px;top:-12%;left:-6%;background:#0c2a4d;opacity:0.42;"></div>
+          <div class="dot" style="width:14px;height:14px;top:26%;right:20%;"></div>
+          <div class="dot" style="width:10px;height:10px;top:70%;right:30%;opacity:0.4;"></div>
+          <div class="dot" style="width:18px;height:18px;top:40%;right:13%;opacity:0.3;"></div>
+          <div class="hair" style="top:300px;left:140px;width:1640px;height:2px;"></div>
+          <div class="prod">
+            <div class="kicker" id="s5-kick" style="position:absolute;top:120px;left:140px;">02 / AI Roleplay</div>
+            <div class="headline prod-head" id="s5-head">Your reps practice on AI prospects before they ever call a real one.</div>
+            <div class="chips" id="s5-chips">
+              <div class="chip">Cut ramp time</div>
+              <div class="chip">Standardize quality</div>
+              <div class="chip">Unblock managers</div>
+            </div>
+            <div class="metrics mono" id="s5-metrics">
+              <div>practice <b>any scenario</b></div>
+              <div><b>consistent</b> every call</div>
+              <div>no <b>manager bottleneck</b></div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ============ SCENE 6 — PROOF ============ -->
       <div id="scene6" class="scene">
-        <div class="glow" data-layout-ignore style="width:900px;height:900px;top:-8%;left:50%;margin-left:-450px;background:#16467e;opacity:0.42;"></div>
-        <div class="hair" style="bottom:240px;left:140px;width:1640px;height:2px;"></div>
-        <div class="stage">
-          <div class="kicker" style="position:absolute;top:120px;left:140px;">The numbers</div>
-          <div id="s6-grid">
-            <div class="proof-stat" id="s6-a"><div class="bignum pv">3.2x</div><div class="pl">more leads</div></div>
-            <div class="proof-stat" id="s6-b"><div class="bignum pv">4.8x</div><div class="pl">call capture</div></div>
-            <div class="proof-stat" id="s6-c"><div class="bignum pv">320%</div><div class="pl">site conversion</div></div>
+        <div class="cam" data-layout-allow-overflow id="s6-cam">
+          <div class="glow" data-layout-ignore style="width:900px;height:900px;top:-8%;left:50%;margin-left:-450px;background:#16467e;opacity:0.42;"></div>
+          <div class="dot" style="width:12px;height:12px;top:24%;left:24%;opacity:0.45;"></div>
+          <div class="dot" style="width:16px;height:16px;top:30%;right:20%;opacity:0.32;"></div>
+          <div class="dot" style="width:9px;height:9px;bottom:28%;left:40%;opacity:0.4;"></div>
+          <div class="hair" style="bottom:240px;left:140px;width:1640px;height:2px;"></div>
+          <div class="stage">
+            <div class="kicker" style="position:absolute;top:120px;left:140px;">The numbers</div>
+            <div id="s6-grid">
+              <div class="proof-stat" id="s6-a"><div class="bignum pv" id="s6-va">0.0x</div><div class="pl">more leads</div></div>
+              <div class="proof-stat" id="s6-b"><div class="bignum pv" id="s6-vb">0.0x</div><div class="pl">call capture</div></div>
+              <div class="proof-stat" id="s6-c"><div class="bignum pv" id="s6-vc">0%</div><div class="pl">site conversion</div></div>
+            </div>
+            <div id="s6-line">Most clients recover <b>$2,000 to $6,000 a month</b> in the first 30 days.</div>
           </div>
-          <div id="s6-line">Most clients recover <b>$2,000 to $6,000 a month</b> in the first 30 days.</div>
         </div>
       </div>
 
       <!-- ============ SCENE 7 — CTA ============ -->
       <div id="scene7" class="scene">
-        <div class="glow" data-layout-ignore id="s7-glow" style="width:1000px;height:1000px;top:50%;left:50%;margin:-500px 0 0 -500px;background:#1b5fb0;opacity:0.4;"></div>
-        <div class="center">
-          <svg id="s7-mark" viewBox="0 0 360 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dialfyne mark">
-            <defs>
-              <linearGradient id="dfgrad2" x1="0" y1="0" x2="360" y2="300" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#7fc3f7" />
-                <stop offset="1" stop-color="#1b6fe8" />
-              </linearGradient>
-            </defs>
-            <path d="M250 40 C150 56 110 96 70 150 C110 204 150 244 250 260"
-                  stroke="url(#dfgrad2)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" />
-            <rect x="196" y="60" width="150" height="36" rx="18" fill="url(#dfgrad2)" />
-            <rect x="196" y="132" width="150" height="36" rx="18" fill="url(#dfgrad2)" />
-            <rect x="196" y="204" width="100" height="36" rx="18" fill="url(#dfgrad2)" />
-          </svg>
-          <div id="s7-q">Want to hear it answer your phone?</div>
-          <div id="s7-url" class="mono">dialfyne.com</div>
+        <div class="cam" data-layout-allow-overflow id="s7-cam">
+          <div class="glow" data-layout-ignore id="s7-glow" style="width:1000px;height:1000px;top:50%;left:50%;margin:-500px 0 0 -500px;background:#1b5fb0;opacity:0.4;"></div>
+          <div class="center">
+            <svg id="s7-mark" viewBox="0 0 360 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dialfyne mark">
+              <defs>
+                <linearGradient id="dfgrad2" x1="0" y1="0" x2="360" y2="300" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#7fc3f7" />
+                  <stop offset="1" stop-color="#1b6fe8" />
+                </linearGradient>
+              </defs>
+              <path d="M250 40 C150 56 110 96 70 150 C110 204 150 244 250 260"
+                    stroke="url(#dfgrad2)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" />
+              <rect x="196" y="60" width="150" height="36" rx="18" fill="url(#dfgrad2)" />
+              <rect x="196" y="132" width="150" height="36" rx="18" fill="url(#dfgrad2)" />
+              <rect x="196" y="204" width="100" height="36" rx="18" fill="url(#dfgrad2)" />
+            </svg>
+            <div id="s7-q">Want to hear it answer your phone?</div>
+            <div id="s7-url" class="mono">dialfyne.com</div>
+          </div>
         </div>
       </div>
     </div>
@@ -370,99 +405,117 @@
       window.__timelines = window.__timelines || {};
       var tl = gsap.timeline({ paused: true });
 
-      /* =====================================================================
-         SCENE 1 — HOOK  (visible 0 -> ~5.4)
-      ===================================================================== */
+      // count-up helper: tweens a proxy and writes formatted text (deterministic, seekable)
+      function countUp(id, to, dur, at, fmt) {
+        var o = { v: 0 };
+        tl.to(o, {
+          v: to, duration: dur, ease: "power2.out",
+          onUpdate: function () { document.getElementById(id).textContent = fmt(o.v); },
+        }, at);
+      }
+      var pct = function (v) { return Math.round(v) + "%"; };
+      var mult = function (v) { return v.toFixed(1) + "x"; };
+
+      /* ===================== SCENE 1 — HOOK ===================== */
       tl.fromTo("#s1-kick", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.2);
       tl.fromTo("#s1-num", { opacity: 0, scale: 1.25, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "expo.out" }, 0.35);
-      tl.fromTo("#s1-line", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.7);
+      countUp("s1-num", 62, 1.2, 0.4, pct);
+      tl.fromTo("#s1-line", { opacity: 0, y: 40, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.7);
       tl.fromTo("#s1-foot", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 1.0);
-      // ambient: glow breathe
+      // camera: slow push-in
+      tl.to("#s1-cam", { scale: 1.08, duration: 5.0, ease: "sine.inOut" }, 0.2);
+      // ambient glow breathe + phone-ring pulses (finite)
       tl.to("#s1-glow", { scale: 1.12, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.2);
-      // ring pulses (finite)
       tl.fromTo("#s1-ring1", { scale: 0.45, opacity: 0.55 }, { scale: 1.5, opacity: 0, duration: 2.0, ease: "power1.out", repeat: 2 }, 0.4);
       tl.fromTo("#s1-ring2", { scale: 0.45, opacity: 0.5 }, { scale: 1.5, opacity: 0, duration: 2.0, ease: "power1.out", repeat: 2 }, 1.1);
       tl.fromTo("#s1-ring3", { scale: 0.45, opacity: 0.45 }, { scale: 1.5, opacity: 0, duration: 2.0, ease: "power1.out", repeat: 2 }, 1.8);
 
-      /* TRANSITION 1: blur crossfade  S1 -> S2  @ 5.0 */
-      tl.to("#scene1", { filter: "blur(12px)", scale: 1.04, opacity: 0, duration: 0.5, ease: "power2.inOut" }, 5.0);
-      tl.fromTo("#scene2", { filter: "blur(12px)", scale: 0.97, opacity: 0 }, { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" }, 5.1);
+      /* TRANSITION 1: whip-pan left  S1 -> S2  @ 5.0 */
+      tl.to("#scene1", { x: -440, skewX: -5, filter: "blur(16px)", opacity: 0, duration: 0.32, ease: "power3.in" }, 5.0);
+      tl.fromTo("#scene2", { x: 470, skewX: 5, filter: "blur(16px)", opacity: 0 }, { x: 0, skewX: 0, filter: "blur(0px)", opacity: 1, duration: 0.42, ease: "power3.out" }, 5.12);
 
-      /* =====================================================================
-         SCENE 2 — THE COST  (visible ~5.5 -> ~10.2)
-      ===================================================================== */
+      /* ===================== SCENE 2 — THE COST ===================== */
       tl.fromTo("#scene2 .kicker", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 5.5);
       tl.fromTo("#s2-num", { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" }, 5.6);
-      tl.fromTo("#s2-line", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 6.0);
+      countUp("s2-num", 97, 1.2, 5.65, pct);
+      tl.fromTo("#s2-line", { opacity: 0, y: 36, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 6.0);
       tl.fromTo("#s2-tag", { opacity: 0, y: 26, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.6)" }, 6.4);
+      // camera: pan right
+      tl.to("#s2-cam", { x: 26, scale: 1.05, duration: 4.6, ease: "sine.inOut" }, 5.5);
       tl.to("#s2-glow", { scale: 1.15, duration: 2.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 5.6);
+      tl.to("#scene2 .dot", { y: "-=46", duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.35 }, 5.7);
 
       /* TRANSITION 2: ZOOM THROUGH (hero reveal)  S2 -> S3  @ 10.0 */
-      tl.to("#scene2", { scale: 2.5, opacity: 0, filter: "blur(8px)", duration: 0.45, ease: "power3.in" }, 10.0);
-      tl.fromTo("#scene3", { scale: 0.5, opacity: 0, filter: "blur(8px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 10.2);
+      tl.to("#scene2", { scale: 2.4, opacity: 0, filter: "blur(10px)", duration: 0.42, ease: "power3.in" }, 10.0);
+      tl.fromTo("#scene3", { scale: 0.55, opacity: 0, filter: "blur(10px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 10.2);
 
-      /* =====================================================================
-         SCENE 3 — BRAND REVEAL  (visible ~10.7 -> ~15.4)
-      ===================================================================== */
+      /* ===================== SCENE 3 — BRAND REVEAL ===================== */
       tl.fromTo("#s3-kick", { opacity: 0, y: 16, letterSpacing: "1.2em" }, { opacity: 1, y: 0, letterSpacing: "0.6em", duration: 0.7, ease: "power2.out" }, 10.7);
       tl.fromTo("#s3-mark", { opacity: 0, scale: 0.6, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(1.5)" }, 10.9);
-      tl.fromTo("#s3-word", { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 0.7, ease: "expo.out" }, 11.15);
+      tl.fromTo("#s3-word", { opacity: 0, x: 50, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.7, ease: "expo.out" }, 11.15);
       tl.fromTo("#s3-rule", { width: 0 }, { width: 560, duration: 0.7, ease: "power2.inOut" }, 11.7);
       tl.fromTo("#s3-tag", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 12.0);
+      // camera: very gentle breath (restrained for the hero hold)
+      tl.to("#s3-cam", { scale: 1.065, duration: 4.6, ease: "sine.inOut" }, 10.7);
       tl.to("#s3-glow", { scale: 1.18, opacity: 0.6, duration: 2.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 11.0);
 
-      /* TRANSITION 3: blur crossfade  S3 -> S4  @ 15.2 */
-      tl.to("#scene3", { filter: "blur(12px)", scale: 1.03, opacity: 0, duration: 0.5, ease: "power2.inOut" }, 15.2);
-      tl.fromTo("#scene4", { filter: "blur(12px)", scale: 0.97, opacity: 0 }, { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" }, 15.3);
+      /* TRANSITION 3: vertical push up  S3 -> S4  @ 15.2 */
+      tl.to("#scene3", { y: -320, filter: "blur(14px)", opacity: 0, duration: 0.34, ease: "power3.in" }, 15.2);
+      tl.fromTo("#scene4", { y: 360, filter: "blur(14px)", opacity: 0 }, { y: 0, filter: "blur(0px)", opacity: 1, duration: 0.44, ease: "power3.out" }, 15.34);
 
-      /* =====================================================================
-         SCENE 4 — VOICE AI  (visible ~15.7 -> ~22.2)
-      ===================================================================== */
+      /* ===================== SCENE 4 — VOICE AI ===================== */
       tl.fromTo("#s4-kick", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 15.7);
-      tl.fromTo("#s4-head", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 15.9);
+      tl.fromTo("#s4-head", { opacity: 0, y: 40, filter: "blur(12px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, ease: "power3.out" }, 15.9);
       tl.fromTo("#s4-chips .chip", { opacity: 0, y: 30, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.4)", stagger: 0.12 }, 16.5);
       tl.fromTo("#s4-metrics div", { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out", stagger: 0.1 }, 17.1);
-      // waveform: each bar scales in then bounces (one tween per bar, finite)
+      // camera: pan left
+      tl.to("#s4-cam", { x: -28, scale: 1.05, duration: 6.3, ease: "sine.inOut" }, 15.7);
+      // waveform: bars bounce continuously (finite)
       tl.fromTo("#s4-wave span",
         { scaleY: 0.2, opacity: 0 },
-        { scaleY: 1, opacity: 1, transformOrigin: "50% 50%", duration: 0.8, ease: "sine.inOut", stagger: { each: 0.07, yoyo: true, repeat: 5 } }, 16.0);
+        { scaleY: 1, opacity: 1, transformOrigin: "50% 50%", duration: 0.8, ease: "sine.inOut", stagger: { each: 0.07, yoyo: true, repeat: 7 } }, 16.0);
 
-      /* TRANSITION 4: directional blur  S4 -> S5  @ 22.0 */
-      tl.to("#scene4", { filter: "blur(12px)", x: -220, opacity: 0, duration: 0.42, ease: "power3.in" }, 22.0);
-      tl.fromTo("#scene5", { filter: "blur(12px)", x: 220, opacity: 0 }, { filter: "blur(0px)", x: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 22.15);
+      /* TRANSITION 4: whip-pan right  S4 -> S5  @ 22.0 */
+      tl.to("#scene4", { x: 460, skewX: 5, filter: "blur(16px)", opacity: 0, duration: 0.32, ease: "power3.in" }, 22.0);
+      tl.fromTo("#scene5", { x: -470, skewX: -5, filter: "blur(16px)", opacity: 0 }, { x: 0, skewX: 0, filter: "blur(0px)", opacity: 1, duration: 0.42, ease: "power3.out" }, 22.12);
 
-      /* =====================================================================
-         SCENE 5 — ROLEPLAY  (visible ~22.6 -> ~28.2)
-      ===================================================================== */
+      /* ===================== SCENE 5 — ROLEPLAY ===================== */
       tl.fromTo("#s5-kick", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 22.6);
-      tl.fromTo("#s5-head", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 22.8);
+      tl.fromTo("#s5-head", { opacity: 0, y: 40, filter: "blur(12px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, ease: "power3.out" }, 22.8);
       tl.fromTo("#s5-chips .chip", { opacity: 0, y: 30, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.4)", stagger: 0.12 }, 23.4);
       tl.fromTo("#s5-metrics div", { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out", stagger: 0.1 }, 24.0);
+      // camera: pan right + slight rise
+      tl.to("#s5-cam", { x: 24, y: -14, scale: 1.05, duration: 5.4, ease: "sine.inOut" }, 22.6);
+      tl.to("#scene5 .dot", { y: "+=44", duration: 2.6, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.4 }, 22.9);
 
-      /* TRANSITION 5: blur crossfade  S5 -> S6  @ 28.0 */
-      tl.to("#scene5", { filter: "blur(12px)", scale: 1.03, opacity: 0, duration: 0.5, ease: "power2.inOut" }, 28.0);
-      tl.fromTo("#scene6", { filter: "blur(12px)", scale: 0.97, opacity: 0 }, { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.5, ease: "power2.inOut" }, 28.1);
+      /* TRANSITION 5: zoom-through into the numbers  S5 -> S6  @ 28.0 */
+      tl.to("#scene5", { scale: 1.7, opacity: 0, filter: "blur(10px)", duration: 0.38, ease: "power3.in" }, 28.0);
+      tl.fromTo("#scene6", { scale: 0.7, opacity: 0, filter: "blur(10px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.46, ease: "power3.out" }, 28.16);
 
-      /* =====================================================================
-         SCENE 6 — PROOF  (visible ~28.5 -> ~33.6)
-      ===================================================================== */
+      /* ===================== SCENE 6 — PROOF ===================== */
       tl.fromTo("#scene6 .kicker", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 28.5);
       tl.fromTo("#s6-a", { opacity: 0, y: 50, scale: 1.15 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out" }, 28.7);
       tl.fromTo("#s6-b", { opacity: 0, y: 50, scale: 1.15 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out" }, 28.95);
       tl.fromTo("#s6-c", { opacity: 0, y: 50, scale: 1.15 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out" }, 29.2);
-      tl.fromTo("#s6-line", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 29.8);
+      countUp("s6-va", 3.2, 1.1, 28.8, mult);
+      countUp("s6-vb", 4.8, 1.1, 29.05, mult);
+      countUp("s6-vc", 320, 1.2, 29.3, pct);
+      tl.fromTo("#s6-line", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 29.9);
+      // camera: slow push-in
+      tl.to("#s6-cam", { scale: 1.075, duration: 4.9, ease: "sine.inOut" }, 28.5);
+      tl.to("#scene6 .dot", { y: "-=40", duration: 2.5, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.3 }, 28.8);
 
       /* TRANSITION 6: focus pull (wind-down)  S6 -> S7  @ 33.4 */
-      tl.to("#scene6", { filter: "blur(16px)", duration: 0.6, ease: "power1.in" }, 33.4);
-      tl.to("#scene6", { opacity: 0, duration: 0.4, ease: "power2.in" }, 33.65);
-      tl.fromTo("#scene7", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 33.65);
+      tl.to("#scene6", { filter: "blur(18px)", scale: 1.05, duration: 0.6, ease: "power1.in" }, 33.4);
+      tl.to("#scene6", { opacity: 0, duration: 0.4, ease: "power2.in" }, 33.7);
+      tl.fromTo("#scene7", { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 33.7);
 
-      /* =====================================================================
-         SCENE 7 — CTA  (visible ~34.0 -> 39, final fade allowed)
-      ===================================================================== */
+      /* ===================== SCENE 7 — CTA ===================== */
       tl.fromTo("#s7-mark", { opacity: 0, scale: 0.7, y: 18 }, { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(1.5)" }, 34.1);
-      tl.fromTo("#s7-q", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 34.5);
+      tl.fromTo("#s7-q", { opacity: 0, y: 30, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, ease: "power3.out" }, 34.5);
       tl.fromTo("#s7-url", { opacity: 0, letterSpacing: "0.6em" }, { opacity: 1, letterSpacing: "0.3em", duration: 0.7, ease: "power2.out" }, 34.9);
+      // camera: gentle drift
+      tl.to("#s7-cam", { scale: 1.06, duration: 4.2, ease: "sine.inOut" }, 34.1);
       tl.to("#s7-glow", { scale: 1.16, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: 1 }, 34.4);
       // final fade out (only the final scene may exit)
       tl.to("#scene7 .center", { opacity: 0, y: -20, duration: 0.7, ease: "power2.in" }, 38.0);
@@ -473,7 +526,7 @@
       tl.set("#scene3", { visibility: "hidden" }, 15.75);
       tl.set("#scene4", { visibility: "hidden" }, 22.5);
       tl.set("#scene5", { visibility: "hidden" }, 28.55);
-      tl.set("#scene6", { visibility: "hidden" }, 34.1);
+      tl.set("#scene6", { visibility: "hidden" }, 34.2);
       tl.set("#scene7", { visibility: "hidden" }, 38.75);
 
       window.__timelines["main"] = tl;
