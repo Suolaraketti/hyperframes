@@ -1,0 +1,11 @@
+{
+  "name": "logo-animation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes preview",
+    "check": "npx --yes hyperframes lint && npx --yes hyperframes validate && npx --yes hyperframes inspect",
+    "render": "npx --yes hyperframes render",
+    "publish": "npx --yes hyperframes publish"
+  }
+}
