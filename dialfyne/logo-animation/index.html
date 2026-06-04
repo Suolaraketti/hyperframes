@@ -10,20 +10,17 @@
         width: 1920px; height: 1080px; overflow: hidden;
         background: #070b14; font-family: "Oswald", sans-serif; color: #f4f8ff;
       }
-      #root { position: absolute; inset: 0; }
+      #root { position: absolute; inset: 0; overflow: hidden; }
 
       .glow { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none; }
 
-      #kicker {
-        position: absolute; top: 150px; left: 50%; transform: translateX(-50%);
-        font-family: "JetBrains Mono", monospace; letter-spacing: 0.5em; font-size: 22px;
-        color: #7fc3f7; text-transform: uppercase; opacity: 0; white-space: nowrap;
-      }
+      /* camera layer */
+      #world { position: absolute; inset: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
 
       #logoSvg { position: absolute; inset: 0; width: 1920px; height: 1080px; }
 
       /* pillar labels */
-      .pillar { position: absolute; left: 1095px; width: 700px; display: flex; align-items: center; gap: 28px; opacity: 0; }
+      .pillar { position: absolute; left: 1095px; width: 760px; display: flex; align-items: center; gap: 28px; opacity: 0; }
       .pidx { font-family: "JetBrains Mono", monospace; font-size: 34px; font-weight: 500; color: #3fa9ff; font-variant-numeric: tabular-nums; }
       .ptitle { font-size: 52px; font-weight: 700; letter-spacing: -0.02em; color: #f4f8ff; line-height: 1; }
       .psub { font-size: 25px; color: #a9bbd6; margin-top: 9px; }
@@ -31,20 +28,18 @@
       #p2 { top: 497px; }
       #p3 { top: 642px; }
 
-      /* resolve lockup */
+      /* resolve lockup (fixed, outside the camera) */
       #resolve { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 38px; opacity: 0; }
       #resolve .rlogo { width: 880px; height: auto; }
       #resolve .rtag { font-family: "JetBrains Mono", monospace; font-size: 30px; letter-spacing: 0.3em; color: #7fc3f7; text-transform: uppercase; }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="8.5" data-width="1920" data-height="1080">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="11" data-width="1920" data-height="1080">
 
-      <div class="glow" id="bgGlow" style="width:1200px;height:1200px;top:50%;left:24%;margin:-600px 0 0 -600px;background:#15518f;opacity:0;"></div>
+      <div class="glow" id="bgGlow" style="width:1300px;height:1300px;top:50%;left:42%;margin:-650px 0 0 -650px;background:#15518f;opacity:0;"></div>
 
-      <div id="stage">
-        <div id="kicker">The Dialfyne System</div>
-
+      <div id="world" data-layout-allow-overflow>
         <svg id="logoSvg" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dialfyne symbol">
           <defs>
             <linearGradient id="blue" x1="60" y1="54" x2="520" y2="424" gradientUnits="userSpaceOnUse">
@@ -107,44 +102,62 @@
       window.__timelines = window.__timelines || {};
       var tl = gsap.timeline({ paused: true });
 
-      // draw-on helper: set dash to path length, animate offset to 0
+      // --- virtual camera: move #world so (px,py) sits at screen center, scaled by Z ---
+      function camPose(px, py, Z) { return { x: 960 - px * Z, y: 540 - py * Z, scale: Z }; }
+      function camTo(px, py, Z, at, dur, ease) {
+        var p = camPose(px, py, Z);
+        tl.to("#world", { x: p.x, y: p.y, scale: p.scale, duration: dur, ease: ease || "power2.inOut" }, at);
+      }
+      // start zoomed in on the stub
+      gsap.set("#world", Object.assign({ transformOrigin: "0 0" }, camPose(360, 540, 2.3)));
+
+      // draw-on helper
       function drawIn(sel, at, dur, ease) {
         var el = document.querySelector(sel), len = el.getTotalLength();
         gsap.set(el, { strokeDasharray: len, strokeDashoffset: len });
         tl.to(el, { strokeDashoffset: 0, duration: dur, ease: ease || "power1.inOut" }, at);
       }
-      // nodes hidden until they pop
       gsap.set(["#n1", "#n2", "#n3"], { scale: 0, transformOrigin: "center" });
 
-      /* --- background --- */
-      tl.to("#bgGlow", { opacity: 0.55, duration: 0.8, ease: "power2.out" }, 0.0);
-      tl.to("#bgGlow", { scale: 1.1, duration: 4.0, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.8);
+      /* --- background (fixed, behind camera) --- */
+      tl.to("#bgGlow", { opacity: 0.5, duration: 0.8, ease: "power2.out" }, 0.0);
+      tl.to("#bgGlow", { scale: 1.1, duration: 5.0, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.8);
 
-      /* --- 1. DRAW THE SYMBOL --- */
+      /* --- 1. DRAW + CAMERA FOLLOWS THE TRACE --- */
       drawIn("#m-stub", 0.25, 0.5, "power2.out");
       drawIn("#m-brace", 0.6, 0.95, "power1.inOut");
-      drawIn("#m-p1", 1.45, 0.42, "power2.out");
-      drawIn("#m-p2", 1.6, 0.42, "power2.out");
-      drawIn("#m-p3", 1.75, 0.42, "power2.out");
-      // brief brightness pulse once drawn
-      tl.fromTo("#logoSvg", { filter: "brightness(1)" }, { filter: "brightness(1.35)", duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.0);
+      drawIn("#m-p1", 1.5, 0.4, "power2.out");
+      drawIn("#m-p2", 1.65, 0.4, "power2.out");
+      drawIn("#m-p3", 1.8, 0.4, "power2.out");
+      tl.fromTo("#logoSvg", { filter: "brightness(1)" }, { filter: "brightness(1.3)", duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.2);
+      // camera tracks the pen (back-to-back moves, no overlap), then settles on the fan
+      camTo(470, 520, 2.2, 0.25, 0.6, "sine.inOut");   // stub into pinch
+      camTo(580, 400, 2.05, 0.85, 0.75, "sine.inOut"); // up the brace
+      camTo(680, 560, 1.95, 1.6, 0.55, "sine.inOut");  // toward the prongs
+      camTo(780, 540, 1.8, 2.15, 0.55, "power2.inOut"); // settle on the prongs
 
-      /* --- 2. PRONGS -> PILLARS --- */
-      tl.fromTo("#kicker", { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 2.3);
-      drawIn("#c1", 2.45, 0.5, "power2.inOut");
-      drawIn("#c2", 2.7, 0.5, "power2.inOut");
-      drawIn("#c3", 2.95, 0.5, "power2.inOut");
-      tl.to("#n1", { scale: 1, duration: 0.4, ease: "back.out(2.2)" }, 2.9);
-      tl.to("#n2", { scale: 1, duration: 0.4, ease: "back.out(2.2)" }, 3.15);
-      tl.to("#n3", { scale: 1, duration: 0.4, ease: "back.out(2.2)" }, 3.4);
-      tl.fromTo("#p1", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 3.0);
-      tl.fromTo("#p2", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 3.25);
-      tl.fromTo("#p3", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 3.5);
+      /* --- 2. ESTABLISH THE FAN, DRAW CONNECTORS --- */
+      camTo(850, 540, 1.35, 2.7, 0.85, "power2.inOut");
+      drawIn("#c1", 2.8, 0.5, "power2.inOut");
+      drawIn("#c2", 3.0, 0.5, "power2.inOut");
+      drawIn("#c3", 3.2, 0.5, "power2.inOut");
+      tl.to("#n1", { scale: 1, duration: 0.4, ease: "back.out(2.2)" }, 3.15);
+      tl.to("#n2", { scale: 1, duration: 0.4, ease: "back.out(2.2)" }, 3.35);
+      tl.to("#n3", { scale: 1, duration: 0.4, ease: "back.out(2.2)" }, 3.55);
 
-      /* --- 3. RESOLVE INTO FULL LOCKUP --- */
-      tl.to("#stage", { opacity: 0, scale: 0.97, transformOrigin: "50% 50%", duration: 0.55, ease: "power2.in" }, 5.7);
-      tl.fromTo("#resolve", { opacity: 0, scale: 0.9, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.85, ease: "expo.out" }, 5.95);
-      tl.fromTo("#resolve .rtag", { opacity: 0, letterSpacing: "0.6em" }, { opacity: 1, letterSpacing: "0.3em", duration: 0.7, ease: "power2.out" }, 6.6);
+      /* --- 3. PILLAR-TO-PILLAR TOUR (camera pushes into each) --- */
+      camTo(1360, 400, 1.7, 3.7, 0.9, "power3.inOut");
+      tl.fromTo("#p1", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 4.0);
+      camTo(1360, 545, 1.7, 5.0, 0.85, "power2.inOut");
+      tl.fromTo("#p2", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 5.3);
+      camTo(1360, 690, 1.7, 6.3, 0.85, "power2.inOut");
+      tl.fromTo("#p3", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 6.6);
+
+      /* --- 4. ZOOM OUT -> FULL WORDMARK --- */
+      camTo(960, 540, 1.0, 7.7, 1.1, "power2.inOut"); // pull all the way back
+      tl.to("#world", { opacity: 0, duration: 0.6, ease: "power2.in" }, 8.5);
+      tl.fromTo("#resolve", { opacity: 0, scale: 0.92, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.9, ease: "expo.out" }, 8.6);
+      tl.fromTo("#resolve .rtag", { opacity: 0, letterSpacing: "0.6em" }, { opacity: 1, letterSpacing: "0.3em", duration: 0.7, ease: "power2.out" }, 9.3);
 
       window.__timelines["main"] = tl;
     </script>
