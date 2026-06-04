@@ -127,14 +127,18 @@ PNW focus, serving everywhere.
 
 ---
 
-## Visual identity (from uploaded logos — files not yet in repo, see Assets TODO)
+## Visual identity (real logo now in repo)
 
-- **Mark:** stylized `{` brace/fork shape with three rounded horizontal "list" bars,
-  plus a separate three-bar (hamburger) mark to its right.
-- **Variants:** (1) flat light/sky blue, (2) same mark in a blue gradient (sky → deeper blue).
-- **Wordmark** renders white (invisible on white bg in the supplied images).
-- Working palette (approx, refine once SVGs land): sky blue ~#7FC3F7, gradient to ~#1B6FE8,
-  white wordmark. Treat as placeholder until exact hex/SVG confirmed.
+- Official logo SVGs are on `main` under `assets/`: `dialfyne_horizontal_logo_clean_vector.svg`
+  (mark + DIALFYNE wordmark + trailing 3-bar "E") and `dialfyne_stacked_logo_clean_vector.svg`.
+  Copies vendored into `dialfyne/overview-video/assets/` and inlined in the composition.
+- **Mark:** brace/fork + 3 graduated bars (left) and a 3-bar "E" motif. White wordmark.
+- **Brand blue gradient (from the SVG):** `#73D8FF` → `#23B2FF` → `#1294FF` (horizontal lockup);
+  stacked uses `#8FD2F7` → `#5CCBFF` → `#1295FF`. Wordmark white `#FFFFFF`.
+- Video dark palette: ink `#070B14`, fg `#F4F8FF`; UI accents in the `#7FC3F7`/`#1B6FE8` family.
+  The logo keeps its own brighter gradient (it's the brand).
+- Upload tip: `.svg` is blocked by the chat upload pipeline. Commit to the repo (as done on
+  `main`) or paste the SVG markup as text.
 
 ## GTM & positioning
 
@@ -172,11 +176,11 @@ by design (no vendor lock-in).
 
 ---
 
-## Assets TODO
+## Assets
 
-- [ ] Get real logo files (SVG preferred, + PNG). The chat-inline logos were NOT saved to
-      disk — re-upload as actual files or paste a link/path so they can live in dialfyne/assets/.
-- [ ] Confirm exact brand hex codes + fonts.
+- [x] Real logo SVGs in repo (`assets/` on `main`, vendored into the video project) and wired
+      into the composition in all four spots (brand reveal, call avatar, dashboard, CTA).
+- [x] Brand hex codes confirmed from the SVG (see Visual identity).
 
 ## Briefs / TODO (append as we go)
 
@@ -186,4 +190,5 @@ by design (no vendor lock-in).
       validate / inspect all green). See that folder's README for the sandbox render steps
       (vendor gsap + symlink ffmpeg). Used the placeholder logo mark (brace + 3 bars) since real
       logo files never landed on disk.
-- [ ] Get real Dialfyne logo files (SVG) to replace the reconstructed mark in the video.
+- [x] Replaced reconstructed mark with the real Dialfyne logo SVG throughout the video.
+- [x] Rebuilt product scenes as animated UI mockups (live call, roleplay scorecard, dashboard).
