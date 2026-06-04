@@ -109,13 +109,15 @@
         tl.to("#world", { x: p.x, y: p.y, scale: p.scale, duration: dur, ease: ease || "power2.inOut" }, at);
       }
       // initial camera pose, set ON the timeline so it persists across the engine's seeks
-      tl.set("#world", Object.assign({ transformOrigin: "0 0" }, camPose(440, 560, 1.7)), 0);
+      tl.set("#world", Object.assign({ transformOrigin: "0 0" }, camPose(500, 500, 1.55)), 0);
 
-      // draw-on helper: the hidden state is set ON the timeline (seekable), then revealed.
-      // (A bare gsap.set is NOT seekable and lets strokes flash in before their draw.)
+      // draw-on helper: hidden state set ON the timeline (seekable). The stroke is kept
+      // fully invisible (opacity 0) until its draw begins, so round line-caps of not-yet-
+      // drawn paths don't render as stray floating dots before the pen reaches them.
       function drawIn(sel, at, dur, ease) {
         var el = document.querySelector(sel), len = el.getTotalLength();
-        tl.set(el, { strokeDasharray: len, strokeDashoffset: len }, 0);
+        tl.set(el, { strokeDasharray: len, strokeDashoffset: len, opacity: 0 }, 0);
+        tl.set(el, { opacity: 1 }, at);
         tl.to(el, { strokeDashoffset: 0, duration: dur, ease: ease || "power1.inOut" }, at);
       }
       tl.set(["#n1", "#n2", "#n3"], { scale: 0, transformOrigin: "center" }, 0);
@@ -125,19 +127,19 @@
       tl.to("#bgGlow", { scale: 1.1, duration: 5.0, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.8);
 
       /* --- 1. DRAW + CAMERA FOLLOWS THE TRACE --- */
-      drawIn("#m-stub", 0.25, 0.5, "power2.out");
-      drawIn("#m-brace", 0.6, 0.95, "power1.inOut");
-      drawIn("#m-p1", 1.5, 0.4, "power2.out");
-      drawIn("#m-p2", 1.65, 0.4, "power2.out");
-      drawIn("#m-p3", 1.8, 0.4, "power2.out");
-      tl.fromTo("#logoSvg", { filter: "brightness(1)" }, { filter: "brightness(1.3)", duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.2);
-      // camera gently traces the reveal (moderate zoom to avoid magnified-stroke shimmer)
-      camTo(560, 440, 1.7, 0.3, 0.9, "sine.inOut");    // up toward the brace
-      camTo(560, 660, 1.7, 1.2, 0.7, "sine.inOut");    // down the brace
-      camTo(740, 540, 1.55, 1.9, 0.7, "power2.inOut"); // out to the prongs
+      // stub + brace draw together so the fork forms as one gesture (not a lone bar then a curve)
+      drawIn("#m-stub", 0.3, 0.7, "power2.inOut");
+      drawIn("#m-brace", 0.35, 1.0, "power1.inOut");
+      drawIn("#m-p1", 1.3, 0.42, "power2.out");
+      drawIn("#m-p2", 1.45, 0.42, "power2.out");
+      drawIn("#m-p3", 1.6, 0.42, "power2.out");
+      tl.fromTo("#logoSvg", { filter: "brightness(1)" }, { filter: "brightness(1.3)", duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.1);
+      // camera follows the reveal as one smooth, gentle move (no darting around empty frame)
+      camTo(540, 600, 1.55, 0.3, 1.1, "sine.inOut");   // gentle drift down as the fork draws
+      camTo(710, 540, 1.5, 1.4, 0.7, "power2.inOut");  // drift right to the fanning prongs
 
       /* --- 2. ESTABLISH THE FAN, DRAW CONNECTORS --- */
-      camTo(850, 540, 1.35, 2.7, 0.85, "power2.inOut");
+      camTo(850, 540, 1.35, 2.4, 0.9, "power2.inOut");
       drawIn("#c1", 2.8, 0.5, "power2.inOut");
       drawIn("#c2", 3.0, 0.5, "power2.inOut");
       drawIn("#c3", 3.2, 0.5, "power2.inOut");
