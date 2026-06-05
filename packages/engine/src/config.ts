@@ -131,6 +131,16 @@ export interface EngineConfig {
   // ── Timeouts ─────────────────────────────────────────────────────────
   playerReadyTimeout: number;
   renderReadyTimeout: number;
+  /**
+   * Puppeteer `page.goto()` navigation timeout for the entry HTML, in ms.
+   * The browser must reach `domcontentloaded` within this budget — heavy
+   * compositions (many videos, large fonts, hundreds of asset requests)
+   * can blow past the default 60s on cold cache. Default: 60_000.
+   *
+   * Env fallback: `PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS`.
+   * CLI flag: `--browser-timeout <seconds>`.
+   */
+  pageNavigationTimeout: number;
 
   // ── Runtime ──────────────────────────────────────────────────────────
   /** Verify Hyperframe runtime SHA256 checksums. */
@@ -204,6 +214,7 @@ export const DEFAULT_CONFIG: EngineConfig = {
 
   playerReadyTimeout: 45_000,
   renderReadyTimeout: 15_000,
+  pageNavigationTimeout: 60_000,
 
   verifyRuntime: true,
 
@@ -217,14 +228,14 @@ function getSystemTotalMb(): number {
 function memoryAdaptiveCacheLimit(): number {
   const total = getSystemTotalMb();
   if (total < 4096) return 32;
-  if (total < 8192) return 64;
+  if (total <= 8192) return 64;
   return DEFAULT_CONFIG.frameDataUriCacheLimit;
 }
 
 function memoryAdaptiveCacheBytesMb(): number {
   const total = getSystemTotalMb();
   if (total < 4096) return 128;
-  if (total < 8192) return 256;
+  if (total <= 8192) return 256;
   return DEFAULT_CONFIG.frameDataUriCacheBytesLimitMb;
 }
 
@@ -332,6 +343,10 @@ export function resolveConfig(overrides?: Partial<EngineConfig>): EngineConfig {
     renderReadyTimeout: envNum(
       "PRODUCER_RENDER_READY_TIMEOUT_MS",
       DEFAULT_CONFIG.renderReadyTimeout,
+    ),
+    pageNavigationTimeout: envNum(
+      "PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS",
+      DEFAULT_CONFIG.pageNavigationTimeout,
     ),
 
     verifyRuntime: env("PRODUCER_VERIFY_HYPERFRAME_RUNTIME") !== "false",
